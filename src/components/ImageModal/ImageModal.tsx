@@ -1,34 +1,45 @@
-import css from "./ImageModal.module.css";
 import { IoClose } from "react-icons/io5";
-import Modal from "react-modal";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { AiTwotoneLike } from "react-icons/ai";
-import { IoMdDownload } from "react-icons/io";
 
-const ImageModal = ({ isOpen, imageModal, onClose }) => {
-  const {
-    alt_description,
+import Modal from "react-modal";
+import { Image } from "../App/App.types";
+
+import css from "./ImageModal.module.css";
+
+interface ImageModalProps {
+  isOpen: boolean;
+  imageModal: Image | null;
+  onClose: () => void;
+};
+
+const ImageModal = ({ isOpen, imageModal, onClose }: ImageModalProps) => {
+  if (!imageModal) return;
+
+  const { alt_description,
     description,
+    user,
     likes,
     links: { download },
     urls: { regular },
     user: { location, name },
-  } = imageModal;
+   } = imageModal;
+
   return (
     <Modal
-      isOpen={isOpen}
-      overlayClassName={css.ReactModal__Overlay}
-      className={css.ReactModal__Content}
-      closeTimeoutMS={300}
-      onRequestClose={() => onClose()}
-      ariaHideApp={false}
+    isOpen={isOpen}
+    overlayClassName={css.ReactModal__Overlay}
+    className={css.ReactModal__Content}
+    closeTimeoutMS={300}
+    onRequestClose={() => onClose}
+    ariaHideApp={false}
     >
-      <button className={css.closeBtn} onClick={() => onClose()}>
+    <button className={css.closeBtn} onClick={() => onClose()}>
         <IoClose className={css.closeIcon} />
       </button>
       <img src={regular} alt={alt_description} />
       <div className={css.info}>
-        {description && <p>{description}</p>}
+      {description && <p>{description}</p>}
         {name && <p>Author: {name}</p>}
         {location && (
           <p className={css.infoItem}>
@@ -43,8 +54,11 @@ const ImageModal = ({ isOpen, imageModal, onClose }) => {
           </p>
         )}
       </div>
+        <a href={download} download className={css.downloadLink}>Download</a>
+   
     </Modal>
   );
 };
+
 
 export default ImageModal;

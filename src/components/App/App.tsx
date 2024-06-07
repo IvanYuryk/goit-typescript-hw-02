@@ -1,25 +1,29 @@
-import { useState, useEffect, useRef } from "react";
-import { fetchImagesSearch } from "../../services/api.js";
-import SearchBar from "../SearchBar/SearchBar.jsx";
-import ImageGallery from "../ImageGallery/ImageGallery.jsx";
-import Loader from "../Loader/Loader.jsx";
-import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn.jsx";
-import ErrorMessage from "../ErrorMessage/ErrorMessage.jsx";
-import ImageModal from "../ImageModal/ImageModal.jsx";
+import React, { useState, useEffect, useRef } from "react";
+import { fetchImagesSearch } from "../../services/api";
+
+import SearchBar from "../SearchBar/SearchBar";
+import ImageGallery from "../ImageGallery/ImageGallery";
+import Loader from "../Loader/Loader";
+import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import ImageModal from "../ImageModal/ImageModal";
+
+import { pagination } from "../../config/config";
+import { Image, SearchValue } from "./App.types";
+
 import css from "./App.module.css";
-import { imgMod, pagination } from "../../config/config.js";
 
-const App = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [maxPage, setMaxPage] = useState(0);
-  const [query, setQuery] = useState("");
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [imageModal, setImageModal] = useState(imgMod);
+const App: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [maxPage, setMaxPage] = useState<number>(0);
+  const [query, setQuery] = useState<string>("");
+  const [images, setImages] = useState<Image[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [imageModal, setImageModal] = useState<Image| null>(null);
 
-  const listRef = useRef(null);
+  const listRef = useRef<HTMLUListElement>(null);
   const scrollHeight = useRef(0);
 
   useEffect(() => {
@@ -31,7 +35,7 @@ const App = () => {
     scrollHeight.current = listRef.current.clientHeight;
   }, [images]);
 
-  const handleSubmit = (value) => {
+  const handleSubmit = (value: SearchValue) => {
     if (query !== value.query) {
       setImages([]);
       setCurrentPage(1);
@@ -39,17 +43,20 @@ const App = () => {
     }
   };
 
-  const onLoadMore = () => setCurrentPage((prev) => prev + 1);
+  const onLoadMore = (): void => setCurrentPage((prev) => prev + 1);
 
-  const openModal = (id) => {
-    setImageModal(images.find((elem) => elem.id === id));
-    setModalIsOpen(true);
+  const openModal = (id: string): void => {
+    const imageModal = images.find((image) => image.id === id);
+    if (imageModal) {
+      setImageModal(imageModal);
+      setModalIsOpen(true);
+    }
   };
+  
 
   useEffect(() => {
     async function fetchImages() {
       try {
-        if (!query) return;
         setError(false);
         setLoading(true);
         const response = await fetchImagesSearch(
