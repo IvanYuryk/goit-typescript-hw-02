@@ -1,19 +1,24 @@
 import { RotatingLines } from "react-loader-spinner";
 
-const Loader = ({ loading }) => {
+interface LoaderProps {
+  loading: boolean;
+}
+
+const Loader: React.FC<LoaderProps> = ({ loading }) => {
   return (
-    <RotatingLines
-      visible={loading}
-      height="96"
-      width="96"
-      color="grey"
-      strokeWidth="5"
-      animationDuration="0.75"
-      ariaLabel="rotating-lines-loading"
-      wrapperStyle={{}}
-      wrapperClass=""
-    />
+    <div>
+      {loading && (
+        <RotatingLines
+          visible={true}
+          strokeColor="green"
+          strokeWidth="5"
+          animationDuration="0.75"
+          width="96"
+        />
+      )}
+    </div>
   );
 };
 
 export default Loader;
+
